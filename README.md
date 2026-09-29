@@ -218,8 +218,7 @@ Der aktuelle Free Plan bietet unter anderem:
 
 - bis zu 100 Projekte;
 - 100 Compute-Stunden (CU-hours) pro Projekt und Monat;
-- 0,5 GB Speicher pro Projekt;
-- insgesamt bis zu 5 GB Speicher über bis zu 10 Projekte.
+- 0,5 GB Speicher pro Projekt.
 
 Eine Compute Unit entspricht bei Neon 1 vCPU und 4 GB RAM.
 
@@ -258,7 +257,7 @@ Ein wichtiger Punkt ist jedoch, dass zusätzliche Nutzung für Bandbreite und Bu
 
 Railway verwendet ein stärker nutzungsabhängiges Modell.
 
-Der Free Plan enthält $1 kostenloses Guthaben pro Monat. Der Hobby Plan kostet $5 pro Monat und enthält ein Nutzungsguthaben von $5. Zusätzliche Nutzung kann berechnet werden.
+Der Free Plan enthält $1 kostenloses Guthaben pro Monat. Der Hobby Plan kostet $5 pro Monat und die Abonnementgebühr wird auf die Ressourcennutzung angerechnet. Zusätzliche Nutzung kann berechnet werden.
 
 Deshalb sollte man bei Railway die Nutzung und die Billing-Einstellungen regelmäßig kontrollieren.
 
@@ -354,4 +353,39 @@ MongoDB Atlas Free bietet beispielsweise 512 MB Speicher. Wenn mehr Daten gespei
 
 Auch die Anzahl der Datenbankverbindungen ist wichtig.
 
-Mongoose verwendet einen Connection Pool. Dadurch können mehrere Datenbankanfra
+Mongoose verwendet einen Connection Pool. Dadurch können mehrere Datenbankanfragen über bestehende Verbindungen verarbeitet werden.
+
+Wenn zu viele Verbindungen gleichzeitig geöffnet werden, können Probleme entstehen. Deshalb sollte die Größe des Connection Pools zur verfügbaren Datenbankkapazität passen.
+
+Bei Prisma gilt ebenfalls, dass die Anzahl der Datenbankverbindungen berücksichtigt werden muss. Bei mehreren Instanzen einer Anwendung kann die Gesamtzahl der Verbindungen schnell steigen.
+
+---
+
+## 5. Bandbreite
+
+Bandbreite beschreibt die Menge an Daten, die zwischen dem Server und den Benutzern übertragen wird.
+
+Zum Beispiel verbraucht eine API Bandbreite, wenn sie große JSON-Antworten oder Dateien an einen Benutzer sendet.
+
+Bei kostenlosen Hosting-Angeboten gibt es deshalb häufig Limits für den ausgehenden Netzwerkverkehr.
+
+Bei Render zählen Free Web Services zum monatlichen Kontingent für ausgehende Bandbreite. Wenn das entsprechende Kontingent vollständig verbraucht wird, können zusätzliche Kosten entstehen.
+
+Für ein kleines Lernprojekt mit kleinen API-Antworten ist der Datenverkehr normalerweise deutlich geringer als bei einer großen Anwendung.
+
+---
+
+## Zusammenfassung von Teil 3
+
+Die wichtigsten Limits eines Free Plans sind:
+
+| Limit                | Bedeutung                                  | Mögliche Folge                                               |
+| -------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| RAM                  | Arbeitsspeicher der Anwendung              | Anwendung kann langsam werden oder neu starten               |
+| Cold Start           | Zeit zum Neustart nach Inaktivität         | Erste Anfrage kann länger dauern                             |
+| CPU / Instance Hours | verfügbare Laufzeit der Serverinstanz      | Service kann nach Erreichen des Limits pausiert werden       |
+| Database Storage     | maximaler Speicherplatz                    | Neue Daten können nicht mehr gespeichert werden              |
+| Database Connections | Anzahl gleichzeitig möglicher Verbindungen | Anfragen können fehlschlagen                                 |
+| Bandwidth            | übertragene Datenmenge                     | Limit kann erreicht werden oder zusätzliche Kosten entstehen |
+
+Für Lernprojekte sind Free Plans deshalb gut geeignet, solange die Anwendung klein bleibt und die jeweiligen Limits regelmäßig kontrolliert werden.
