@@ -4,9 +4,11 @@
 
 ### 1. Was ist Deployment?
 
-Backend-Deployment bedeutet, dass eine Anwendung von einem lokalen Computer auf einen Server bzw. eine Cloud-Plattform übertragen wird. Danach kann die Anwendung über das Internet erreichbar sein.
+Backend-Deployment bedeutet, dass eine Anwendung von einem lokalen Computer auf einen Server bzw. eine Cloud-Plattform übertragen und dort gestartet wird.
 
-Während der Entwicklung läuft die Anwendung zum Beispiel auf `localhost`. Das ist nur auf dem eigenen Computer verfügbar. Beim Deployment wird die Anwendung auf einem Server gestartet, der rund um die Uhr Anfragen von Benutzerinnen und Benutzern bearbeiten kann.
+Während der Entwicklung läuft eine Anwendung zum Beispiel auf `localhost`. Sie ist dann normalerweise nur auf dem eigenen Computer erreichbar.
+
+Beim Deployment wird die Anwendung auf einem Server ausgeführt, der über das Internet erreichbar ist. Dadurch können andere Benutzerinnen und Benutzer auf die API zugreifen.
 
 Deployment ist für eine Anwendung in Production notwendig, weil echte Benutzer nicht auf meinen lokalen Computer zugreifen können.
 
@@ -21,11 +23,12 @@ Ein einfacher Deployment-Prozess sieht so aus:
 3. Ich pushe den Code zu GitHub.
 4. Eine Hosting-Plattform wie Render wird mit dem GitHub-Repository verbunden.
 5. Nach einem Push erkennt Render die Änderung und startet automatisch ein neues Deployment.
-6. Render lädt den Code herunter und installiert die benötigten Dependencies.
-7. Die Anwendung wird mit dem angegebenen Start-Befehl gestartet.
-8. Die Umgebungsvariablen werden aus der Hosting-Plattform geladen.
-9. Die Anwendung verbindet sich mit der externen Datenbank.
-10. Render stellt die Anwendung über eine öffentliche URL zur Verfügung.
+6. Die Plattform lädt den Code herunter.
+7. Die benötigten Dependencies werden installiert.
+8. Die Environment Variables werden geladen.
+9. Die Anwendung wird mit dem Start-Befehl gestartet.
+10. Die Anwendung verbindet sich mit der externen Datenbank.
+11. Die Plattform stellt die Anwendung über eine öffentliche URL zur Verfügung.
 
 Danach kann ein Benutzer eine HTTP-Anfrage an die API senden und die Express-Anwendung kann darauf antworten.
 
@@ -39,7 +42,7 @@ Das ist für echte Benutzer ungeeignet, weil:
 
 - andere Personen nicht auf meinen Computer zugreifen können;
 - mein Computer ständig eingeschaltet sein müsste;
-- meine Internetverbindung funktionieren müsste;
+- meine Internetverbindung ständig funktionieren müsste;
 - mein Computer ausreichend Leistung für alle Anfragen haben müsste;
 - Sicherheitsprobleme entstehen könnten;
 - es keine zuverlässige Produktionsumgebung ist.
@@ -69,12 +72,12 @@ Database
 Die Trennung hat mehrere Vorteile:
 
 - Die Datenbank ist nicht direkt Teil des Webservers.
-- Datenbanken können unabhängig skaliert werden.
-- Managed Database Services übernehmen viele Aufgaben wie Backups, Updates und Monitoring.
+- Datenbank und Backend können unabhängig skaliert werden.
+- Managed Database Services übernehmen viele Aufgaben wie Wartung und Verwaltung.
 - Ein Problem mit dem Backend muss nicht automatisch die Datenbank betreffen.
 - Sicherheitsregeln und Zugriffsrechte können getrennt eingerichtet werden.
 
-Für kleine Lernprojekte kann man Backend und Datenbank auch auf einem Server betreiben. In professionellen Anwendungen ist die Trennung aber sehr üblich.
+Für kleine Lernprojekte kann man Backend und Datenbank auch auf einem Server betreiben. In professionellen Anwendungen ist die Trennung jedoch sehr üblich.
 
 ---
 
@@ -86,7 +89,7 @@ Ich habe zwei Plattformen für Backend-Hosting und zwei Database-as-a-Service-An
 
 ### Backend-Hosting
 
-#### Render
+## Render
 
 Render bietet einen kostenlosen Free-Plan für Web Services an.
 
@@ -97,87 +100,200 @@ npm install
 npm start
 ```
 
-Ein Free Web Service hat unter anderem:
+Der kostenlose Web Service bietet unter anderem:
 
-- 750 kostenlose Instance-Stunden pro Monat;
 - 512 MB RAM;
-- begrenzte CPU-Ressourcen;
-- automatisches Herunterfahren nach 15 Minuten ohne Aktivität;
-- automatische Bereitstellung nach einem Push zu GitHub.
+- weniger als 1 CPU;
+- 750 kostenlose Instance-Stunden pro Workspace und Kalendermonat;
+- automatisches Herunterfahren nach 15 Minuten ohne eingehenden Traffic.
 
-Wenn die 750 Stunden vollständig verbraucht sind, werden die kostenlosen Web Services bis zum nächsten Monat pausiert.
+Wenn ein kostenloser Web Service nach 15 Minuten keine eingehenden Anfragen erhält, wird er heruntergefahren. Bei der nächsten Anfrage startet er wieder. Dieser Start kann ungefähr eine Minute dauern.
 
-Render gibt an, dass der Free-Plan vor allem für Lernen, Testprojekte und Hobbyprojekte gedacht ist.
+Wenn alle 750 kostenlosen Instance-Stunden verbraucht wurden, werden die kostenlosen Web Services bis zum Beginn des nächsten Monats pausiert. Die Stunden werden am Monatsanfang auf 750 zurückgesetzt und nicht übertragen.
 
----
+Render weist ausdrücklich darauf hin, dass kostenlose Instanzen für Lernen, Hobbyprojekte und Tests gedacht sind und nicht für Production-Anwendungen.
 
-#### Railway
+Die aktuellen Compute-Preise beginnen bei:
 
-Railway bietet ebenfalls eine Möglichkeit, Node.js-Anwendungen zu hosten.
+| Render Web Service                     |     Preis |
+| -------------------------------------- | --------: |
+| Free                                   |  $0/Monat |
+| Starter: 512 MB RAM, weniger als 1 CPU |  $7/Monat |
+| Standard: 2 GB RAM, 1 CPU              | $25/Monat |
+| 2 CPU, 4 GB RAM                        | $85/Monat |
 
-Der aktuelle Free Trial beinhaltet:
-
-- einmalig 5 USD Guthaben;
-- Nutzung des Guthabens für bis zu 30 Tage;
-- bis zu 1 vCPU;
-- bis zu 0,5 GB RAM pro Service.
-
-Nach Ablauf des Trials bietet Railway einen Free-Plan mit 1 USD Guthaben pro Monat. Das Guthaben wird nicht in den nächsten Monat übertragen.
-
-Railway verwendet ein nutzungsbasiertes Preismodell. Bei kostenpflichtigen Plänen können zusätzliche Ressourcen nach Verbrauch berechnet werden.
+Die Preise können sich je nach Konfiguration und Region ändern.
 
 ---
 
-### Database-as-a-Service
+## Railway
 
-#### MongoDB Atlas
+Railway bietet ebenfalls Hosting für Node.js-Anwendungen.
+
+Der aktuelle Free Plan kostet:
+
+```text
+$0 / Monat
+```
+
+und beinhaltet:
+
+```text
+$1 kostenloses Nutzungsguthaben pro Monat
+```
+
+Der Free Plan erlaubt pro Service maximal:
+
+- 0,5 GB RAM;
+- 1 vCPU;
+- 1 Replica;
+- 1 GB temporären Speicher;
+- 0,5 GB Volume Storage.
+
+Neue Benutzer erhalten zusätzlich einmalig $5 kostenloses Guthaben für den Trial. Das Trial-Guthaben ist einmalig und kann nicht erneut monatlich verwendet werden.
+
+Die aktuellen Pläne sind:
+
+| Railway Plan |                              Preis |
+| ------------ | ---------------------------------: |
+| Free         | $0/Monat + $1 kostenloses Guthaben |
+| Hobby        |                           $5/Monat |
+| Pro          |                          $20/Monat |
+| Enterprise   |                        individuell |
+
+Railway verwendet ein nutzungsabhängiges Preismodell. Ressourcen wie CPU, RAM und Netzwerk werden entsprechend der Nutzung berechnet.
+
+Railway weist außerdem darauf hin, dass für kostenpflichtige Nutzung eine Zahlungsmethode erforderlich ist. Wenn ein Guthabenmodell verwendet wird und das Guthaben aufgebraucht ist, werden die Workloads gestoppt, bis wieder ausreichend Guthaben vorhanden ist.
+
+---
+
+# Database-as-a-Service
+
+## MongoDB Atlas
 
 MongoDB Atlas ist ein Managed Database Service für MongoDB.
 
-Der kostenlose Free Cluster bietet:
+Der kostenlose Free Cluster kostet:
+
+```text
+$0
+```
+
+und ist dauerhaft kostenlos.
+
+Er bietet:
 
 - 512 MB Speicher;
 - Shared RAM;
 - Shared vCPU;
-- kostenlos auf Dauer.
+- bis zu 100 Operationen pro Sekunde.
 
-Der Free Cluster ist ausdrücklich für Lernen und kleinere Projekte gedacht.
+Der Free Cluster ist besonders für Lernen und kleine Projekte geeignet.
 
-Wenn mehr Ressourcen benötigt werden, gibt es kostenpflichtige Optionen. Zum Beispiel beginnt ein M2 Cluster bei ungefähr 9 USD pro Monat und ein M5 Cluster bei ungefähr 25 USD pro Monat.
+Für größere Projekte bietet MongoDB Atlas unter anderem Flex und Dedicated an.
+
+Aktuelle Preise:
+
+| MongoDB Atlas |                                Preis |
+| ------------- | -----------------------------------: |
+| Free          |                             $0/Monat |
+| Flex          | ab $0.011/Stunde, bis etwa $30/Monat |
+| Dedicated     | ab $0.08/Stunde bzw. ab $56.94/Monat |
+
+Der Flex-Tarif ist nutzungsabhängig. Bei kontinuierlicher Nutzung liegt der Preis je nach Operations-Level zwischen etwa $8 und $30 pro Monat. Dedicated Cluster beginnen bei etwa $56.94 pro Monat.
 
 ---
 
-#### Neon
+## Neon
 
-Neon ist ein Managed-PostgreSQL-Service und kann deshalb mit PostgreSQL und Prisma verwendet werden.
+Neon ist ein Managed-PostgreSQL-Service. Deshalb kann Neon beispielsweise mit PostgreSQL und Prisma verwendet werden.
 
-Der Free Plan bietet unter anderem:
+Der Free Plan kostet:
+
+```text
+$0
+```
+
+Der aktuelle Free Plan bietet unter anderem:
 
 - bis zu 100 Projekte;
-- 100 Compute-Stunden pro Projekt und Monat;
+- 100 Compute-Stunden (CU-hours) pro Projekt und Monat;
 - 0,5 GB Speicher pro Projekt;
-- insgesamt bis zu 5 GB über 10 Projekte.
+- insgesamt bis zu 5 GB Speicher über bis zu 10 Projekte.
 
-Neon verwendet ein nutzungsbasiertes Modell. Bei kostenpflichtiger Nutzung bezahlt man für die tatsächlich verwendeten Ressourcen.
+Eine Compute Unit entspricht bei Neon 1 vCPU und 4 GB RAM.
+
+Neon verwendet ein nutzungsabhängiges Preismodell. Die kostenpflichtigen Pläne berechnen Compute und Storage nach tatsächlicher Nutzung.
+
+Neon unterstützt außerdem Scale-to-Zero. Dadurch kann eine Datenbank bei fehlender Aktivität automatisch in den Idle-Zustand wechseln und später wieder gestartet werden.
+
+---
+
+## Vergleich der kostenlosen Angebote
+
+| Plattform     | Typ             | Kostenloses Angebot                        | Nach Überschreitung                                                                                               |
+| ------------- | --------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Render        | Backend Hosting | 512 MB RAM, 750 Stunden/Monat              | Free Services werden bei Erreichen des Stundenlimits pausiert; zusätzliche Bandbreite kann kostenpflichtig werden |
+| Railway       | Backend Hosting | $1 Guthaben/Monat                          | Usage-based; kostenpflichtiger Hobby Plan ab $5/Monat                                                             |
+| MongoDB Atlas | MongoDB         | 512 MB, dauerhaft kostenlos                | Flex oder Dedicated, nutzungsabhängig                                                                             |
+| Neon          | PostgreSQL      | 100 CU-hours/Projekt/Monat, 0,5 GB/Projekt | Usage-based                                                                                                       |
+
+Die Angaben beziehen sich auf die zum Zeitpunkt der Recherche verfügbaren offiziellen Preise und Limits.
 
 ---
 
 ## 2. Kostenanalyse
 
-| Plattform     | Typ             | Kostenloses Angebot                   | Kostenmodell                   |
-| ------------- | --------------- | ------------------------------------- | ------------------------------ |
-| Render        | Backend Hosting | 750 Stunden/Monat, Free Web Service   | Kostenpflichtige Compute-Pläne |
-| Railway       | Backend Hosting | $5 Trial, danach $1 Free Credit/Monat | Usage-based                    |
-| MongoDB Atlas | MongoDB         | 512 MB kostenlos                      | M2 ab ca. $9/Monat             |
-| Neon          | PostgreSQL      | 0,5 GB pro Projekt                    | Usage-based                    |
+Die Plattformen unterscheiden sich deutlich beim Preismodell.
 
-Für Lernende sind kostenlose Angebote mit klaren Limits besonders interessant.
+### Render
 
-Render ist für ein einfaches Lernprojekt praktisch, weil der Free Web Service ohne Kreditkarte genutzt werden kann und ein monatliches Stundenlimit besitzt.
+Render hat einen echten kostenlosen Web-Service-Tarif. Das ist für Lernprojekte praktisch, weil die Nutzung durch Limits begrenzt ist.
 
-MongoDB Atlas ist ebenfalls interessant, weil der kostenlose Free Cluster dauerhaft kostenlos angeboten wird.
+Nach dem kostenlosen Compute-Tarif beginnen bezahlte Web Services aktuell bei $7 pro Monat.
 
-Bei nutzungsbasierten Angeboten muss man dagegen besonders auf die Abrechnung achten.
+Ein wichtiger Punkt ist jedoch, dass zusätzliche Nutzung für Bandbreite und Build-Pipeline kostenpflichtig werden kann, wenn die entsprechenden Limits überschritten werden und eine Zahlungsmethode hinterlegt ist. Ohne Zahlungsmethode werden bestimmte Free Services stattdessen pausiert.
+
+### Railway
+
+Railway verwendet ein stärker nutzungsabhängiges Modell.
+
+Der Free Plan enthält $1 kostenloses Guthaben pro Monat. Der Hobby Plan kostet $5 pro Monat und enthält ein Nutzungsguthaben von $5. Zusätzliche Nutzung kann berechnet werden.
+
+Deshalb sollte man bei Railway die Nutzung und die Billing-Einstellungen regelmäßig kontrollieren.
+
+### MongoDB Atlas
+
+Der MongoDB Atlas Free Cluster ist dauerhaft kostenlos und hat ein festes Limit von 512 MB.
+
+Wenn mehr Ressourcen benötigt werden, kann man auf Flex oder Dedicated wechseln. Flex ist nutzungsabhängig und kostet bis zu etwa $30 pro Monat. Dedicated beginnt bei etwa $56.94 pro Monat.
+
+### Neon
+
+Neon bietet einen kostenlosen Free Plan mit begrenzten Compute- und Storage-Ressourcen.
+
+Die kostenpflichtige Nutzung ist ebenfalls usage-based. Man bezahlt entsprechend der tatsächlich verwendeten Compute- und Storage-Ressourcen.
+
+### Optionen für Lernende
+
+Für ein kleines Lernprojekt sind Angebote mit klaren kostenlosen Limits besonders praktisch.
+
+Eine mögliche Kombination ist:
+
+```text
+Backend:
+Render Free
+
+Database:
+MongoDB Atlas Free
+
+Code:
+GitHub
+```
+
+Diese Kombination eignet sich gut für ein kleines Node.js/Express/Mongoose-Lernprojekt.
+
+Bei allen Plattformen sollte man trotzdem die aktuellen Usage- und Billing-Einstellungen kontrollieren, bevor man eine Zahlungsmethode hinterlegt.
 
 ---
 
@@ -189,7 +305,7 @@ RAM ist der Arbeitsspeicher des Servers.
 
 Wenn ein Server zum Beispiel 512 MB RAM hat, kann die Anwendung nur eine begrenzte Menge an Daten gleichzeitig im Arbeitsspeicher halten.
 
-Bei einer Node.js-Anwendung kann zu viel RAM-Verbrauch dazu führen, dass:
+Bei einer Node.js-Anwendung kann zu hoher RAM-Verbrauch dazu führen, dass:
 
 - die Anwendung langsamer wird;
 - Prozesse beendet werden;
@@ -198,13 +314,17 @@ Bei einer Node.js-Anwendung kann zu viel RAM-Verbrauch dazu führen, dass:
 
 Deshalb sollte eine Anwendung nicht unnötig viele Daten gleichzeitig im Speicher halten.
 
+Bei Render verfügt ein Free Web Service über 512 MB RAM.
+
 ---
 
 ## 2. Cold Starts / Ruhephasen / Inaktivitäts-Timeouts
 
 Bei kostenlosen Hosting-Angeboten kann ein Server nach einer bestimmten Zeit ohne Anfragen heruntergefahren werden.
 
-Bei Render wird ein kostenloser Web Service nach 15 Minuten ohne Aktivität heruntergefahren. Bei der nächsten Anfrage muss der Service wieder gestartet werden. Dieser Vorgang wird als Cold Start bezeichnet.
+Bei Render wird ein kostenloser Web Service nach 15 Minuten ohne eingehenden Traffic heruntergefahren.
+
+Wenn anschließend eine neue Anfrage kommt, wird der Service wieder gestartet. Dieser Start kann ungefähr eine Minute dauern.
 
 Für Benutzer bedeutet das, dass die erste Anfrage nach einer längeren Pause deutlich länger dauern kann.
 
@@ -216,69 +336,22 @@ Danach läuft der Server wieder normal.
 
 CPU-Zeit beschreibt, wie lange die Rechenressourcen einer Anwendung verwendet werden.
 
-Render bietet für Free Web Services 750 Instance-Stunden pro Workspace und Monat. Ein laufender Free Service verbraucht diese Stunden. Wenn alle 750 Stunden verbraucht wurden, werden die kostenlosen Web Services bis zum Beginn des nächsten Monats pausiert.
+Render bietet für Free Web Services 750 Instance-Stunden pro Workspace und Kalendermonat.
 
-Das bedeutet nicht, dass eine Anwendung nach genau 750 einzelnen Anfragen stoppt. Es geht um die Zeit, in der die Instanz läuft.
+Ein Free Web Service verbraucht diese Stunden nur während er läuft. Während eines Idle-Sleep-Zustands werden keine Free Instance Hours verbraucht.
+
+Wenn alle 750 Stunden verbraucht wurden, werden die kostenlosen Web Services bis zum Beginn des nächsten Monats pausiert.
+
+Das bedeutet nicht, dass die Anwendung nach 750 einzelnen Anfragen stoppt. Es geht um die Zeit, in der die Serverinstanz aktiv ist.
 
 ---
 
-## 4. Datenbankspeicher und aktive Verbindungen
+## 4. Datenbankspeicher und Limits für aktive Verbindungen
 
-Der Datenbankspeicher bestimmt, wie viele Daten in der Datenbank gespeichert werden können.
+Der Datenbankspeicher bestimmt, wie viele Daten in einer Datenbank gespeichert werden können.
 
-MongoDB Atlas Free Cluster bietet beispielsweise 512 MB Speicher. Dieser Speicher ist begrenzt. Wenn der Speicher voll ist, können weitere Schreiboperationen fehlschlagen.
+MongoDB Atlas Free bietet beispielsweise 512 MB Speicher. Wenn mehr Daten gespeichert werden müssen, reicht der Free Cluster nicht mehr aus.
 
 Auch die Anzahl der Datenbankverbindungen ist wichtig.
 
-Mongoose verwendet einen Connection Pool. Dadurch können mehrere Datenbankanfragen über bestehende Verbindungen verarbeitet werden.
-
-Prisma verwendet ebenfalls einen Connection Pool für Datenbankverbindungen.
-
-Wenn eine Anwendung zu viele Verbindungen gleichzeitig öffnet, kann das Datenbanklimit erreicht werden. Dann können neue Anfragen Fehler bekommen.
-
-Deshalb sollte eine Backend-Anwendung nicht für jede Anfrage eine komplett neue Datenbankverbindung erstellen. Stattdessen sollte die Anwendung eine Verbindung bzw. einen Connection Pool wiederverwenden.
-
----
-
-## 5. Ausgehender Datentransfer / Bandbreite
-
-Bandbreite beschreibt die Menge an Daten, die ein Server an Benutzer oder andere Systeme sendet.
-
-Beispiel:
-
-Wenn eine Anwendung jeden Monat 5 GB Daten an Benutzer sendet und das kostenlose Limit 5 GB beträgt, ist das Limit erreicht.
-
-Hoher Datentransfer kann zum Beispiel durch folgende Dinge entstehen:
-
-- große Dateien;
-- Bilder;
-- Videos;
-- große API-Antworten;
-- viele Benutzer.
-
-Wenn ein Limit erreicht wird, kann der Anbieter den Service einschränken, pausieren oder zusätzliche Kosten berechnen. Deshalb sollte man die Limits des jeweiligen Anbieters kontrollieren.
-
----
-
-## Zusammenfassung
-
-Für dieses Projekt würde ich folgenden Stack verwenden:
-
-```text
-Backend:
-Node.js + Express
-
-Database:
-MongoDB Atlas
-
-ODM:
-Mongoose
-
-Hosting:
-Render
-
-Code Repository:
-GitHub
-```
-
-Dieser Stack ist für ein Lernprojekt einfach zu verstehen und ermöglicht einen klaren Deployment-Prozess.
+Mongoose verwendet einen Connection Pool. Dadurch können mehrere Datenbankanfra
